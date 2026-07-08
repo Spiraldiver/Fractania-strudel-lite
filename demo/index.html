@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Fractania-strudel-lite demo</title>
+  <style>
+    body { margin: 0; background: #111; color: #eee; font-family: monospace; }
+    #ui { position: fixed; top: 10px; left: 10px; z-index: 10; background: rgba(0,0,0,.55); padding: 10px; border-radius: 6px; max-width: 460px; }
+    button { margin: 2px; }
+    #log { white-space: pre-wrap; font-size: 11px; color: #8f8; max-height: 30vh; overflow: auto; }
+    #log .err { color: #f88; }
+    label { display: inline-block; width: 90px; }
+  </style>
+</head>
+<body>
+<div id="ui">
+  <div id="variants"></div>
+  <div>
+    <label>power</label><input id="power" type="range" min="2" max="16" step="0.01" value="8"><span id="powerv">8</span><br>
+    <label>glow</label><input id="glow" type="range" min="0" max="3" step="0.01" value="0"><br>
+    <label>feedback</label><input id="feedback" type="range" min="0" max="0.98" step="0.01" value="0"><br>
+    <label>chromatic</label><input id="chromatic" type="range" min="0" max="0.05" step="0.001" value="0"><br>
+    <label>orbit</label><input id="orbit" type="range" min="0" max="1" step="0.01" value="0.15">
+  </div>
+  <div id="log"></div>
+</div>
+<script type="module">
+  const log = (msg, cls = '') => {
+    const el = document.getElementById('log');
+    el.innerHTML += `<span class="${cls}">${msg}</span>\n`;
+    console.log('[demo]', msg);
+  };
+  const origErr = console.error.bind(console);
+  console.error = (...a) => { log(a.join(' ').slice(0, 2000), 'err'); origErr(...a); };
+  window.addEventListener('error', (e) => log('window error: ' + e.message, 'err'));
+
+  try {
+    const mod = await import('../dist/fractania-strudel-lite.js');
+    const { initFractania, VARIANT_NAMES } = mod;
+    // ?fast=1 → tiny render for software-GL (SwiftShader) test environments
+    const q = new URLSearchParams(location.search);
+    const fast = q.has('fast');
+    if (q.has('masq')) {
+      // simulate strudel's initHydra path: canvas with a WebGL1 context
+      // already bound (getDrawContext contextType:'webgl'), then new Hydra()
+      const c = document.createElement('canvas');
+      c.id = 'hydra-canvas';
+      c.style = 'pointer-events:none;width:100%;height:100%;position:fixed;top:0;left:0';
+      document.body.prepend(c);
+      c.getContext('webgl');
+      new mod.FractaniaAsHydra({ canvas: c, pixelRatio: parseFloat(q.get('px')) || 0.5 });
+      log('masquerade boot OK (webgl1-bound canvas handled)');
+    } else {
+      await initFractania({
+        pixelRatio: parseFloat(q.get('px')) || (fast ? 0.08 : 0.75),
+        fps: parseFloat(q.get('fps')) || (fast ? 1 : 0),
+      });
+    }
+    log('initFractania OK — variants: ' + VARIANT_NAMES.join(', '));
+
+    const state = { variant: q.get('variant') || 'Mandelbulb', power: 8, glow: parseFloat(q.get('glow')) || 0, feedback: parseFloat(q.get('fb')) || 0, chromatic: parseFloat(q.get('ca')) || 0, orbit: 0.15 };
+    const apply = () => {
+      let ch = fractal(state.variant)
+        .power(state.power)
+        .iterations(fast ? 8 : 12)
+        .bailout(16)
+        .steps(fast ? 48 : 256)
+        .camera(0, 0, 4)
+        .fov(45)
+        .glow(state.glow, 0.25)
+        .glowcolor(1.0, 0.45, 0.1)
+        .feedback(state.feedback)
+        .chromatic(state.chromatic)
+        .orbit(state.orbit);
+      if (fast) ch = ch.noshadow().ao(0);
+      if (q.has('slots')) ch = ch.wobble(0.15, 3).boxfold(1, 0.5);
+      if (q.has('tf')) ch = ch.wobble(0.15, 3);
+      if (q.has('fold')) ch = ch.boxfold(1, 0.5);
+      const tn = q.get('tname'); if (tn && typeof ch[tn] === 'function') ch = ch[tn]();
+      const fn = q.get('fname'); if (fn && typeof ch[fn] === 'function') ch = ch[fn]();
+      const res = q.get('res'); if (res) { const [rw, rh] = res.split('x').map(Number); ch = ch.resolution(rw, rh); }
+      ch.out();
+    };
+
+    const vdiv = document.getElementById('variants');
+    VARIANT_NAMES.forEach((n, i) => {
+      const b = document.createElement('button');
+      b.textContent = `${i}:${n}`;
+      b.onclick = () => { state.variant = n; apply(); log('variant → ' + n); };
+      vdiv.appendChild(b);
+    });
+    for (const k of ['power', 'glow', 'feedback', 'chromatic', 'orbit']) {
+      document.getElementById(k).oninput = (e) => {
+        state[k] = parseFloat(e.target.value);
+        if (k === 'power') document.getElementById('powerv').textContent = state[k].toFixed(1);
+        apply();
+      };
+    }
+    apply();
+    log('default chain .out() OK — rendering');
+    // headless-test hook (?probe=1): render, read back the FBO, embed stats +
+    // a PNG snapshot in the DOM, then stop the loop so --dump-dom completes.
+    if (q.has('probe')) {
+      const snapPng = (s) => {
+        const c2 = document.createElement('canvas');
+        c2.width = s.w; c2.height = s.h;
+        const ctx = c2.getContext('2d');
+        const img = ctx.createImageData(s.w, s.h);
+        for (let y = 0; y < s.h; y++) {  // flip Y (readPixels is bottom-up)
+          img.data.set(s.pixels.subarray((s.h - 1 - y) * s.w * 4, (s.h - y) * s.w * 4), y * s.w * 4);
+        }
+        ctx.putImageData(img, 0, 0);
+        return new Promise((res) => c2.toBlob(res, 'image/png'));
+      };
+      setTimeout(async () => {
+        try {
+          for (let vi = 0; vi < VARIANT_NAMES.length; vi++) {
+            state.variant = VARIANT_NAMES[vi];
+            apply();
+            const s = window.fractaniaRenderer.probe();
+            log(`PROBE v${vi} ${VARIANT_NAMES[vi]} ${s.w}x${s.h} nonzero=${s.nonzero}/${s.total} avg=${s.avg.toFixed(1)} center=rgba(${s.center.join(',')})`);
+            const blob = await snapPng(s);
+            await fetch('/upload?name=variant_' + vi + '_' + VARIANT_NAMES[vi] + '.png', { method: 'POST', body: blob });
+          }
+          window.clearFractania();
+          log('PROBE-DONE');
+        } catch (e) { log('PROBE-FAIL: ' + (e.stack || e), 'err'); }
+      }, 1500);
+    }
+  } catch (e) {
+    log('FATAL: ' + (e.stack || e.message || e), 'err');
+  }
+</script>
+</body>
+</html>
