@@ -22,7 +22,7 @@ let mod = sine.slow(4)
 
 // breakbeat
 $: s("crate_bd ~ ~ crate_sd ~ crate_bd ~ crate_sd").cut(1).gain(0.9)
-$: s("crate_sh*8").gain("0.2 0.08 0.14 0.08").lpf(6000).cut(2)
+$: s("hh*8").gain("0.2 0.08 0.14 0.08").lpf(6000).cut(2)
 $: s("~ ~ crate_hh ~ ~ ~ crate_hh ~").gain(0.16).lpf(7000).cut(2)
 $: s("~ ~ ~ ~ ~ ~ crate_oh ~").cut(2).gain(0.26)
 $: s("~ crate_rim ~ ~ ~ ~ ~ crate_rim").gain(0.25)
