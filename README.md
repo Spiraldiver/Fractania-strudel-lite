@@ -6,15 +6,11 @@ Live-codable 3D fractals for strudel.cc by Spiraldiver
 
 ## Use in strudel.cc
 
+Load with a plain dynamic import — single quotes, or the transpiler reads the
+URL as mini-notation. The module boots itself; no `initFractania()` needed.
+**Alt+drag** orbits the camera, `clearFractania()` removes the canvas.
+
 ### Mandelbulb
-
-`power` stays at 8 — the classic bulb. The LFO drives `thetashift`, which adds
-to the polar angle inside the formula, so the lobes rotate instead of the whole
-shape changing order.
-
-The camera sits slightly off-axis and the key light comes from the left, both
-by default, so neither needs to be stated in the patch. The geometry is not
-rotated — only the viewpoint — so the fractal itself is unchanged.
 
 ```js
 // Hold Alt + Click to Rotate
@@ -49,13 +45,6 @@ fractal("Mandelbulb")
 ```
 
 ### Menger
-
-The Dub Example arrangement — four eight-bar sections, drums from the
-`samples_percs` crate, and the fractal driven by the same LFO as the arp.
-
-Menger is a fold, not an escape-time formula: it ignores `power` and `bailout`.
-Its controls are `mengerscale` (how far each iteration expands, default 3) and
-`mengeroffset` (the fold centre, default 1,1,1); `iterations` sets depth.
 
 ```js
 // Hold Alt + Click to Rotate
@@ -144,41 +133,6 @@ $: arrange(
 ).gain(0.85)
 
 ```
-
-**Orbit trap.** Menger matches the Fractania app's `menger_3d.frag`: the trap
-is accumulated *before* the fold, with zero in the fourth channel, and read on
-the **Z** channel — the app presets Menger (fractal id 1) to orbit method Z,
-while Mandelbulb uses R.
-
-```glsl
-orbitTrapDiffuse = min(orbitTrapDiffuse, abs(vec4(z.xyz, 0.0)));
-```
-
-The trap only reaches the shading once `.color()` is given **two** colours —
-`uUseDiffuseGradient` is off by default, so with one colour the trap is computed
-and thrown away. The second triple is the far end of the gradient; `.hue()`
-rotates it and `.glow()` drives the emission trap.
-
-Keep Menger `iterations` low — the sponge converges after 5-7 levels and each
-one costs a full fold per ray step.
-
----
-
-> **Single quotes matter.** Strudel's transpiler rewrites every double-quoted
-> string into mini-notation, and a URL is not valid mini-notation, so
-> `import("https://…")` fails with `[mini] parse error … but "/" found`.
-
-Mirror:
-
-```js
-await import('https://cdn.jsdelivr.net/gh/Spiraldiver/Fractania-strudel-lite@main/dist/fractania-strudel-lite.js')
-```
-
-> jsDelivr caches `@main` hard and can serve a stale build for hours — GitHub
-> Pages is always fresh, and with jsDelivr you should pin a tag.
-
-The module boots itself on import, so no `initFractania()` call is needed.
-`clearFractania()` stops and removes the canvas. **Alt+drag** orbits the camera.
 
 ## Fractals
 
