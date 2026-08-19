@@ -69,7 +69,7 @@ const kick = s("crate_bd ~ ~ crate_bd").cut(1).gain(0.9).lpf(800)
 
 const snare = s("~ crate_rim ~ crate_rim").cut(2).gain(0.42).lpf(3000).room(0.2)
 
-const hats = s("crate_sh*8").cut(3)
+const hats = s("hh*8").cut(3)
   .gain("<0.06 0.02 0.05 0.01>").lpf(5500).pan("<0.45 0.55>")
 
 const rarePerc = s("~ crate_perc ~ crate_perc").slow(4).cut(4)
@@ -135,11 +135,20 @@ fractal("Menger")
   .mengerscale(mod.range(2.6, 3.4))
   .mengeroffset(1, 1, 1)
   .iterations(6)
+  .color(0.95, 0.55, 0.2, 0.05, 0.15, 0.35)
+  .hue(mod.range(0, 0.15))
+  .glow(0.6, 0.3)
   .fov(50)
   .orbit(0.08)
   .roughness(0.7).metallic(0.2)
   .out()
 ```
+
+**Orbit trap.** Both formulas track `min(|z|)` across the iteration, but that
+trap only reaches the shading once `.color()` is given two colours —
+`uUseDiffuseGradient` is off by default, so without it the trap is computed and
+thrown away. The second triple is the far end of the gradient; `.hue()` rotates
+it and `.glow()` drives the emission trap.
 
 Keep Menger `iterations` low — the sponge converges after 5-7 levels and each
 one costs a full fold per ray step.
