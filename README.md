@@ -18,7 +18,7 @@ $: s("sawtooth:2!16")
   .resonance(8.72)
   .delay(0.383, 0.8296)
 
-fractal("Menger")
+fractal("Mandelbulb")
   .power(mod.range(4, 12))
   .iterations(12)
   .bailout(16)
