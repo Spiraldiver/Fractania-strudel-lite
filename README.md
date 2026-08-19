@@ -12,7 +12,12 @@ Live-codable 3D fractals for strudel.cc by Spiraldiver
 to the polar angle inside the formula, so the lobes rotate instead of the whole
 shape changing order.
 
+The camera sits slightly off-axis and the key light comes from the left, both
+by default, so neither needs to be stated in the patch. The geometry is not
+rotated — only the viewpoint — so the fractal itself is unchanged.
+
 ```js
+// Hold Alt + Click to Rotate
 await import('https://spiraldiver.github.io/Fractania-strudel-lite/dist/fractania-strudel-lite.js')
 
 let mod = sine.slow(4)
@@ -29,7 +34,7 @@ fractal("Mandelbulb")
   .thetashift(mod.range(-0.5, 0.5))
   .iterations(12)
   .bailout(16)
-  .camera(0, 0, 4).fov(45)
+  .fov(45)
   .roughness(0.4).metallic(0.6)
   .out()
 ```
@@ -42,6 +47,7 @@ formula — it ignores `power` and `bailout` entirely. Its own controls are
 (the fold centre, default 1,1,1); `iterations` sets recursion depth.
 
 ```js
+// Hold Alt + Click to Rotate
 await import('https://spiraldiver.github.io/Fractania-strudel-lite/dist/fractania-strudel-lite.js')
 
 let mod = sine.slow(4)
@@ -57,7 +63,7 @@ fractal("Menger")
   .mengerscale(mod.range(2.6, 3.4))
   .mengeroffset(1, 1, 1)
   .iterations(6)
-  .camera(0, 0, 3.2).fov(50)
+  .fov(50)
   .orbit(0.12)
   .roughness(0.7).metallic(0.2)
   .out()

@@ -49,7 +49,7 @@ export class FractalChain {
   translate(x = 0, y = 0, z = 0) { return this._v('uTranslate', [x, y, z]); }
 
   // ── camera ──
-  camera(x = 0, y = 0, z = 4) {
+  camera(x = 1.6, y = 1.0, z = 3.5) {
     this._p('uCamMode', 1); this._p('uCamOrbit', 1);
     return this._v('uCamPos', [x, y, z]);
   }
@@ -66,7 +66,7 @@ export class FractalChain {
   }
 
   // ── shading / material ──
-  light(x = 4, y = 6, z = -3) { return this._v('uLightPos', [x, y, z]); }
+  light(x = -5, y = 4, z = 3) { return this._v('uLightPos', [x, y, z]); }
   metallic(v) { return this._p('uMetallic', v); }
   roughness(v) { return this._p('uRoughness', v); }
   reflection(v) { return this._p('uReflection', v); }

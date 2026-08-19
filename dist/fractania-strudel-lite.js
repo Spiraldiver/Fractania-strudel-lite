@@ -1745,7 +1745,7 @@ var WEB_DEFAULTS = {
   uZoom: 1,
   uFOV: 45,
   uCamMode: 1,
-  uCamPos: [0, 0, 4],
+  uCamPos: [1.6, 1, 3.5],
   uCamRot: [0, 0, 0],
   uCamOrbit: 1,
   uDofEnabled: 0,
@@ -1754,7 +1754,7 @@ var WEB_DEFAULTS = {
   UseEquirectangularCamera: 0,
   EquirectangularFOV: 6.2831853,
   EquirectangularBlend: 1,
-  uLightPos: [4, 6, -3],
+  uLightPos: [-5, 4, 3],
   uAoStrength: 1,
   uAoSteps: 4,
   uGradientMode: 2,
@@ -2313,7 +2313,7 @@ var FractalChain = class {
     return this._v("uTranslate", [x, y, z]);
   }
   // ── camera ──
-  camera(x = 0, y = 0, z = 4) {
+  camera(x = 1.6, y = 1, z = 3.5) {
     this._p("uCamMode", 1);
     this._p("uCamOrbit", 1);
     return this._v("uCamPos", [x, y, z]);
@@ -2339,7 +2339,7 @@ var FractalChain = class {
     return this._p("uFocalDist", focal);
   }
   // ── shading / material ──
-  light(x = 4, y = 6, z = -3) {
+  light(x = -5, y = 4, z = 3) {
     return this._v("uLightPos", [x, y, z]);
   }
   metallic(v) {
