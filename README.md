@@ -8,6 +8,10 @@ Live-codable 3D fractals for strudel.cc by Spiraldiver
 
 ### Mandelbulb
 
+`power` stays at 8 — the classic bulb. The LFO drives `thetashift`, which adds
+to the polar angle inside the formula, so the lobes rotate instead of the whole
+shape changing order.
+
 ```js
 await import('https://spiraldiver.github.io/Fractania-strudel-lite/dist/fractania-strudel-lite.js')
 
@@ -21,7 +25,8 @@ $: s("sawtooth:2!16")
   .delay(0.383, 0.8296)
 
 fractal("Mandelbulb")
-  .power(mod.range(4, 12))
+  .power(8)
+  .thetashift(mod.range(-0.5, 0.5))
   .iterations(12)
   .bailout(16)
   .camera(0, 0, 4).fov(45)
@@ -29,11 +34,45 @@ fractal("Mandelbulb")
   .out()
 ```
 
+### Menger
+
+Same patch in **dorian**. The Menger sponge is a fold, not an escape-time
+formula — it ignores `power` and `bailout` entirely. Its own controls are
+`mengerscale` (how far each iteration expands, default 3) and `mengeroffset`
+(the fold centre, default 1,1,1); `iterations` sets recursion depth.
+
+```js
+await import('https://spiraldiver.github.io/Fractania-strudel-lite/dist/fractania-strudel-lite.js')
+
+let mod = sine.slow(4)
+
+$: s("sawtooth:2!16")
+  .note("<0 -12 0 7 0 1 8 0 -12 0 -12 1 0 7 8 -12>*16")
+  .scale("e:dorian")
+  .cutoff(mod.range(500, 4695))
+  .resonance(8.72)
+  .delay(0.383, 0.8296)
+
+fractal("Menger")
+  .mengerscale(mod.range(2.6, 3.4))
+  .mengeroffset(1, 1, 1)
+  .iterations(6)
+  .camera(0, 0, 3.2).fov(50)
+  .orbit(0.12)
+  .roughness(0.7).metallic(0.2)
+  .out()
+```
+
+Keep Menger `iterations` low — the sponge converges after 5-7 levels and each
+one costs a full fold per ray step.
+
+---
+
 > **Single quotes matter.** Strudel's transpiler rewrites every double-quoted
 > string into mini-notation, and a URL is not valid mini-notation, so
 > `import("https://…")` fails with `[mini] parse error … but "/" found`.
 
-Mirrors:
+Mirror:
 
 ```js
 await import('https://cdn.jsdelivr.net/gh/Spiraldiver/Fractania-strudel-lite@main/dist/fractania-strudel-lite.js')
@@ -43,36 +82,7 @@ await import('https://cdn.jsdelivr.net/gh/Spiraldiver/Fractania-strudel-lite@mai
 > Pages is always fresh, and with jsDelivr you should pin a tag.
 
 The module boots itself on import, so no `initFractania()` call is needed.
-`clearFractania()`
-stops and removes the canvas. **Alt+drag** orbits the camera.
-
-### Menger
-
-The Menger sponge is a fold, not an escape-time formula: it ignores `.power`
-and `.bailout` entirely. Its own controls are `.mengerscale` (how far each
-iteration expands, default 3) and `.mengeroffset` (the fold centre, default
-1,1,1). `.iterations` sets the recursion depth.
-
-```js
-await import('https://spiraldiver.github.io/Fractania-strudel-lite/dist/fractania-strudel-lite.js')
-
-let mod = sine.slow(8)
-
-$: s("bd ~ sd ~").bank("tr909").gain(0.8)
-
-fractal("Menger")
-  .mengerscale(mod.range(2.6, 3.4))
-  .mengeroffset(1, 1, 1)
-  .iterations(6)
-  .scale(1)
-  .camera(0, 0, 3.2).fov(50)
-  .orbit(0.12)
-  .roughness(0.7).metallic(0.2)
-  .out()
-```
-
-Keep `.iterations` low — the sponge converges after 5-7 levels and each one
-costs a full fold per ray step.
+`clearFractania()` stops and removes the canvas. **Alt+drag** orbits the camera.
 
 ## Fractals
 
