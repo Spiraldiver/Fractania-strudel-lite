@@ -19,8 +19,16 @@ rotated — only the viewpoint — so the fractal itself is unchanged.
 ```js
 // Hold Alt + Click to Rotate
 await import('https://spiraldiver.github.io/Fractania-strudel-lite/dist/fractania-strudel-lite.js')
+samples('github:Spiraldiver/samples_percs')
 
+setcpm(85/4)
 let mod = sine.slow(4)
+
+// breakbeat
+$: s("crate_bd ~ ~ crate_sd ~ crate_bd ~ crate_sd").cut(1).gain(0.9)
+$: s("crate_hh*8").gain("0.4 0.15 0.3 0.15").cut(2)
+$: s("~ ~ ~ ~ ~ ~ crate_oh ~").cut(2).gain(0.4)
+$: s("~ crate_rim ~ ~ ~ ~ ~ crate_rim").gain(0.25)
 
 $: s("sawtooth:2!16")
   .note("<0 -12 0 7 0 1 8 0 -12 0 -12 1 0 7 8 -12>*16")
@@ -49,8 +57,17 @@ formula — it ignores `power` and `bailout` entirely. Its own controls are
 ```js
 // Hold Alt + Click to Rotate
 await import('https://spiraldiver.github.io/Fractania-strudel-lite/dist/fractania-strudel-lite.js')
+samples('github:Spiraldiver/samples_percs')
 
+setcpm(72/4)
 let mod = sine.slow(4)
+
+// dub — one drop, kick and snare together on beat 3
+$: s("~ ~ ~ ~ crate_bd ~ ~ ~").cut(1).gain(1)
+$: s("~ ~ ~ ~ crate_sd ~ ~ ~").cut(2).gain(0.6)
+  .delay(0.6).delaytime(0.375).delayfeedback(0.68).room(0.6)
+$: s("~ crate_hh ~ crate_hh ~ crate_hh ~ crate_hh").cut(3).gain(0.3)
+$: s("~ ~ ~ ~ ~ ~ ~ crate_perc").gain(0.35).delay(0.5).room(0.7)
 
 $: s("sawtooth:2!16")
   .note("<0 -12 0 7 0 1 8 0 -12 0 -12 1 0 7 8 -12>*16")
