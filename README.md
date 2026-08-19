@@ -6,6 +6,8 @@ Live-codable 3D fractals for strudel.cc by Spiraldiver
 
 ## Use in strudel.cc
 
+### Mandelbulb
+
 ```js
 await import('https://spiraldiver.github.io/Fractania-strudel-lite/dist/fractania-strudel-lite.js')
 
@@ -44,6 +46,34 @@ The module boots itself on import, so no `initFractania()` call is needed.
 `clearFractania()`
 stops and removes the canvas. **Alt+drag** orbits the camera.
 
+### Menger
+
+The Menger sponge is a fold, not an escape-time formula: it ignores `.power`
+and `.bailout` entirely. Its own controls are `.mengerscale` (how far each
+iteration expands, default 3) and `.mengeroffset` (the fold centre, default
+1,1,1). `.iterations` sets the recursion depth.
+
+```js
+await import('https://spiraldiver.github.io/Fractania-strudel-lite/dist/fractania-strudel-lite.js')
+
+let mod = sine.slow(8)
+
+$: s("bd ~ sd ~").bank("tr909").gain(0.8)
+
+fractal("Menger")
+  .mengerscale(mod.range(2.6, 3.4))
+  .mengeroffset(1, 1, 1)
+  .iterations(6)
+  .scale(1)
+  .camera(0, 0, 3.2).fov(50)
+  .orbit(0.12)
+  .roughness(0.7).metallic(0.2)
+  .out()
+```
+
+Keep `.iterations` low — the sponge converges after 5-7 levels and each one
+costs a full fold per ray step.
+
 ## Fractals
 
 Selected by name — `fractal("Mandelbulb")`, `fractal("Menger")`. Mini-notation
@@ -54,7 +84,8 @@ switches them per cycle: `fractal("<Mandelbulb Menger>")`.
 Every numeric argument accepts a number, a function `(t) => n`, or a Strudel
 pattern/signal.
 
-- **Core** — `.power` `.iterations` `.bailout` `.thetashift` `.phishift` `.offset(x,y,z)` `.scale` `.rotate(x,y,z)` `.prerotate(x,y,z)` `.translate(x,y,z)`
+- **Core** — `.power` `.iterations` `.bailout` `.thetashift` `.phishift` `.offset(x,y,z)` `.scale` `.zradius` `.rotate(x,y,z)` `.prerotate(x,y,z)` `.translate(x,y,z)`
+- **Menger only** — `.mengerscale` `.mengeroffset(x,y,z)` — `.power` and `.bailout` do nothing on this variant
 - **Camera** — `.camera(x,y,z)` `.camrot(x,y,z)` `.fov` `.zoom` `.orbit(speed)` `.dof(aperture,focal)`
 - **Shading** — `.metallic` `.roughness` `.reflection` `.light(x,y,z)`
 - **Color** — `.color(r,g,b[,r2,g2,b2])` `.hue` `.glow(strength,threshold)` `.glowcolor(r,g,b)` `.background(r,g,b)`

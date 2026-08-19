@@ -38,6 +38,12 @@ export class FractalChain {
   phishift(v) { return this._p('uPhiShift', v); }
   offset(x = 0, y = 0, z = 0) { return this._v('uOffset', [x, y, z]); }
   scale(v) { return this._p('uScale', v); }
+  zradius(v) { return this._p('uZRadius', v); }
+  // Menger-specific. The shader has always read these; they simply had no
+  // chain method, so the Menger variant could only ever run at its defaults
+  // (scale 3, offset 1,1,1).
+  mengerscale(v) { return this._p('uMengerScale', v); }
+  mengeroffset(x = 1, y = 1, z = 1) { return this._v('uMengerOffset', [x, y, z]); }
   rotate(x = 0, y = 0, z = 0) { return this._v('uRotateFractal', [x, y, z]); }
   prerotate(x = 0, y = 0, z = 0) { return this._v('uPreRotation', [x, y, z]); }
   translate(x = 0, y = 0, z = 0) { return this._v('uTranslate', [x, y, z]); }
