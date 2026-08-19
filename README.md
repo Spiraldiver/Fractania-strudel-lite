@@ -26,8 +26,9 @@ let mod = sine.slow(4)
 
 // breakbeat
 $: s("crate_bd ~ ~ crate_sd ~ crate_bd ~ crate_sd").cut(1).gain(0.9)
-$: s("crate_hh*8").gain("0.4 0.15 0.3 0.15").cut(2)
-$: s("~ ~ ~ ~ ~ ~ crate_oh ~").cut(2).gain(0.4)
+$: s("crate_sh*8").gain("0.2 0.08 0.14 0.08").lpf(6000).cut(2)
+$: s("~ ~ crate_hh ~ ~ ~ crate_hh ~").gain(0.16).lpf(7000).cut(2)
+$: s("~ ~ ~ ~ ~ ~ crate_oh ~").cut(2).gain(0.26)
 $: s("~ crate_rim ~ ~ ~ ~ ~ crate_rim").gain(0.25)
 
 $: s("sawtooth:2!16")
@@ -68,8 +69,8 @@ const kick = s("crate_bd ~ ~ crate_bd").cut(1).gain(0.9).lpf(800)
 
 const snare = s("~ crate_rim ~ crate_rim").cut(2).gain(0.42).lpf(3000).room(0.2)
 
-const hats = s("crate_hh*8").cut(3)
-  .gain("<0.07 0.02 0.06 0.01>").lpf(5500).pan("<0.45 0.55>")
+const hats = s("crate_sh*8").cut(3)
+  .gain("<0.06 0.02 0.05 0.01>").lpf(5500).pan("<0.45 0.55>")
 
 const rarePerc = s("~ crate_perc ~ crate_perc").slow(4).cut(4)
   .gain(0.3).hpf(2800).lpf(9000).delay(0.38).room("1:4")
