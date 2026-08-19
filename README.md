@@ -65,6 +65,18 @@ samples('github:Spiraldiver/samples_percs')
 setcpm(85 / 4)
 let mod = sine.slow(4)
 
+fractal("Menger")
+  .mengerscale(mod.range(2.6, 3.4))
+  .mengeroffset(1, 1, 1)
+  .iterations(6)
+  .color(0.95, 0.55, 0.2, 0.05, 0.15, 0.35)
+  .hue(mod.range(0, 0.15))
+  .glow(0.6, 0.3)
+  .fov(50)
+  .orbit(0.08)
+  .roughness(0.7).metallic(0.2)
+  .out()
+
 const kick = s("crate_bd ~ ~ crate_bd").cut(1).gain(0.9).lpf(800)
 
 const snare = s("~ crate_rim ~ crate_rim").cut(2).gain(0.42).lpf(3000).room(0.2)
@@ -131,24 +143,15 @@ $: arrange(
   [8, stack(kick, hats, skank, bass, organ4,  arp4)]
 ).gain(0.85)
 
-fractal("Menger")
-  .mengerscale(mod.range(2.6, 3.4))
-  .mengeroffset(1, 1, 1)
-  .iterations(6)
-  .color(0.95, 0.55, 0.2, 0.05, 0.15, 0.35)
-  .hue(mod.range(0, 0.15))
-  .glow(0.6, 0.3)
-  .fov(50)
-  .orbit(0.08)
-  .roughness(0.7).metallic(0.2)
-  .out()
 ```
 
-**Orbit trap.** Menger accumulates `min(|z|)` across the iteration with the
-radius in the fourth channel, matching the FOP `menger3d` formula:
+**Orbit trap.** Menger matches the Fractania app's `menger_3d.frag`: the trap
+is accumulated *before* the fold, with zero in the fourth channel, and read on
+the **Z** channel — the app presets Menger (fractal id 1) to orbit method Z,
+while Mandelbulb uses R.
 
 ```glsl
-orbitTrap = min(orbitTrap, abs(vec4(z, length(z))));
+orbitTrapDiffuse = min(orbitTrapDiffuse, abs(vec4(z.xyz, 0.0)));
 ```
 
 The trap only reaches the shading once `.color()` is given **two** colours —
