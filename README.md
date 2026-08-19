@@ -49,9 +49,8 @@ fractal("Mandelbulb")
 ```js
 // Hold Alt + Click to Rotate
 await import('https://spiraldiver.github.io/Fractania-strudel-lite/dist/fractania-strudel-lite.js')
-samples('github:Spiraldiver/samples_percs')
 
-setcpm(85 / 4)
+setcpm(85/4)
 let mod = sine.slow(4)
 
 fractal("Menger")
@@ -66,72 +65,12 @@ fractal("Menger")
   .roughness(0.7).metallic(0.2)
   .out()
 
-const kick = s("crate_bd ~ ~ crate_bd").cut(1).gain(0.9).lpf(800)
-
-const snare = s("~ crate_rim ~ crate_rim").cut(2).gain(0.42).lpf(3000).room(0.2)
-
-const hats = s("hh*8").cut(3)
-  .gain("<0.06 0.02 0.05 0.01>").lpf(5500).pan("<0.45 0.55>")
-
-const rarePerc = s("~ crate_perc ~ crate_perc").slow(4).cut(4)
-  .gain(0.3).hpf(2800).lpf(9000).delay(0.38).room("1:4")
-
-const skank = note("~ [c4,eb4,g4] ~ [c4,eb4,g4]").s("triangle")
-  .gain(0.5).attack(0.01).decay(0.09).sustain(0).release(0.1)
-  .lpf(1500).delay(0.18)
-
-const bass = note("c2 c2 ~ eb2 g1 ~ bb1 g1").s("sawtooth")
-  .gain(0.48).attack(0.01).release(0.22)
-  .lpf(sine.range(130, 320).slow(5))
-
-const organ1 = note("<c3 ~ eb3 ~ g3 ~ eb3 ~>").s("supersaw")
-  .gain(0.12).attack(0.02).decay(0.16).sustain(0.12).release(0.25)
-  .lpf(1050).delay(0.55).room(0.3)
-
-const organ2 = note("<c3 ~ g3 ~ bb3 ~ eb3 ~>").s("supersaw")
-  .gain(0.12).attack(0.02).decay(0.16).sustain(0.12).release(0.25)
-  .lpf(1050).delay(0.55).room(0.3)
-
-const organ4 = note("<g3 ~ eb3 ~ bb2 ~ c3 ~>").s("supersaw")
-  .gain(0.12).attack(0.02).decay(0.16).sustain(0.12).release(0.25)
-  .lpf(1050).delay(0.55).room(0.3)
-
-// arp
-const arp = note("c5 eb5 g5 bb5 g5 eb5 d5 f5 ab5 c6 ab5 f5 eb5 g5 bb5 d6")
+$: note("c5 eb5 g5 bb5 g5 eb5 d5 f5 ab5 c6 ab5 f5 eb5 g5 bb5 d6")
   .s("triangle")
   .gain("<0.07 0.1 0.06 0.12>")
   .attack(0.005).decay(0.06).sustain(0).release(0.09)
-  .lpf(sine.range(700, 2600).slow(4))
+  .lpf(mod.range(700, 2600))
   .delay(0.45).room(0.35)
-
-const arp2 = note("c5 g5 eb5 bb5 d5 f5 ab5 c6 bb5 g5 eb5 d5 f5 ab5 c6 d6")
-  .s("triangle")
-  .gain("<0.07 0.1 0.06 0.12>")
-  .attack(0.005).decay(0.06).sustain(0).release(0.09)
-  .lpf(sine.range(700, 2600).slow(4))
-  .delay(0.45).room(0.35)
-
-const arp3 = note("eb5 g5 bb5 c6 bb5 g5 f5 d5 c5 eb5 g5 ab5 c6 ab5 f5 d5")
-  .s("triangle")
-  .gain("<0.07 0.1 0.06 0.12>")
-  .attack(0.005).decay(0.06).sustain(0).release(0.09)
-  .lpf(sine.range(700, 2600).slow(4))
-  .delay(0.45).room(0.35)
-
-const arp4 = note("d6 bb5 g5 eb5 c6 ab5 f5 d5 c5 eb5 g5 bb5 ab5 f5 eb5 c5")
-  .s("triangle")
-  .gain("<0.07 0.1 0.06 0.12>")
-  .attack(0.005).decay(0.06).sustain(0).release(0.09)
-  .lpf(sine.range(700, 2600).slow(4))
-  .delay(0.45).room(0.35)
-
-$: arrange(
-  [8, stack(snare, hats, skank, organ1, arp,  rarePerc)],
-  [8, stack(kick, snare, skank, bass, organ2, arp2)],
-  [8, stack(kick, snare, hats, skank, bass,   arp3, rarePerc)],
-  [8, stack(kick, hats, skank, bass, organ4,  arp4)]
-).gain(0.85)
-
 ```
 
 ## Fractals
