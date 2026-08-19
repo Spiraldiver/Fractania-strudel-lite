@@ -144,11 +144,17 @@ fractal("Menger")
   .out()
 ```
 
-**Orbit trap.** Both formulas track `min(|z|)` across the iteration, but that
-trap only reaches the shading once `.color()` is given two colours —
-`uUseDiffuseGradient` is off by default, so without it the trap is computed and
-thrown away. The second triple is the far end of the gradient; `.hue()` rotates
-it and `.glow()` drives the emission trap.
+**Orbit trap.** Menger accumulates `min(|z|)` across the iteration with the
+radius in the fourth channel, matching the FOP `menger3d` formula:
+
+```glsl
+orbitTrap = min(orbitTrap, abs(vec4(z, length(z))));
+```
+
+The trap only reaches the shading once `.color()` is given **two** colours —
+`uUseDiffuseGradient` is off by default, so with one colour the trap is computed
+and thrown away. The second triple is the far end of the gradient; `.hue()`
+rotates it and `.glow()` drives the emission trap.
 
 Keep Menger `iterations` low — the sponge converges after 5-7 levels and each
 one costs a full fold per ray step.

@@ -1573,7 +1573,7 @@ float fractal_sdf(vec3 pos) {
     for (int i = 0; i < MAX_ITERS; i++) {
         if (i >= uIterations) break;
         if (gComputeOrbit) {
-            if (i >= dMinI && i < dMaxI) gOrbitDiffuse = min(gOrbitDiffuse, abs(vec4(z, 0.0)));
+            if (i >= dMinI && i < dMaxI) gOrbitDiffuse = min(gOrbitDiffuse, abs(vec4(z, length(z))));
             if (i >= eMinI && i < eMaxI) gOrbitEmission = min(gOrbitEmission, abs(vec4(z, dot(z, z))));
         }
 
