@@ -1,14 +1,5 @@
-// Fractania-strudel-lite — Fractania renderer for strudel.cc.
-//
-// Load with a plain dynamic import; the module boots itself:
-//
-//   await import('https://spiraldiver.github.io/Fractania-strudel-lite/dist/fractania-strudel-lite.js')
-//   fractal("mandelbulb").power(8).out()
-//
-// Strudel's transpiler does not rewrite import expressions, so this is ordinary
-// JavaScript. Note the SINGLE quotes: a double-quoted string would be rewritten
-// into mini-notation and a URL is not valid mini-notation.
-// https://github.com/Spiraldiver/Fractania-strudel   License: AGPL-3.0
+// Fractania-strudel-lite — 3D fractals for strudel.cc
+// https://github.com/Spiraldiver/Fractania-strudel-lite   License: AGPL-3.0
 import { FractaniaRenderer, variantIndex, VARIANT_NAMES } from './engine.mjs';
 import { FractalChain, installPatternMap } from './api.mjs';
 
@@ -131,11 +122,7 @@ class FractaniaAsHydra {
   hush() { engine?.hush(); }
 }
 
-// Backwards compatibility only. Earlier versions were loaded through strudel's
-// initHydra({src}), which imports a url and then calls `new Hydra()`. That path
-// still works, but the global is now claimed ONLY when nothing else owns it —
-// claiming it unconditionally broke real Hydra for anyone who loaded this
-// bundle alongside it.
+// initHydra({src}) compatibility; claimed only if unowned.
 if (typeof globalThis.Hydra === 'undefined') globalThis.Hydra = FractaniaAsHydra;
 
 globalThis.fractal = fractal;
@@ -144,8 +131,7 @@ globalThis.initFractania = initFractania;
 globalThis.clearFractania = clearFractania;
 if (!globalThis.F) globalThis.F = F;
 
-// Self-boot on import: importing IS the setup, so no initFractania() call is
-// needed. Guarded so a second import does not tear down a running engine.
+// Boot on import.
 if (!globalThis.__fractaniaLoaded) {
   globalThis.__fractaniaLoaded = true;
   await initFractania();

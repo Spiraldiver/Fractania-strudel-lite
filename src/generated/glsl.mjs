@@ -1604,7 +1604,7 @@ vec3 orbit_trap_color(vec3 pos, out float diffTrap) {
     if (trap.x > 1e8) trap = vec4(0.5);
     dTrap = sin(dTrap*uDiffusePeriod - uDiffuseOffset)*0.5 + 0.5;
     trap  = sin(trap*uEmissionPeriod - uEmissionOffset)*0.5 + 0.5;
-        float du = dTrap.z, dv = dTrap.z;   // Menger preset: orbit method Z
+        float du = dTrap.z, dv = dTrap.z;
     gFractDiffuseUV = clamp(vec2(du, dv), vec2(0.0), vec2(1.0));
     diffTrap = clamp(mix(du,dv,0.5), 0.0, 1.0);
         float eu = trap.x, ev = trap.x;
