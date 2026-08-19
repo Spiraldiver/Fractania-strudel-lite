@@ -636,9 +636,12 @@ float softShadow(vec3 ro, vec3 rd, float mint, float maxt, float k) {
     for (int i = 0; i < 64; i++) {
         if (i >= cap) break;
         float d = fractal_sdf(ro + rd * t);
-        if (d < 0.0001) return 0.0;
+        // only count a hit once the ray has cleared the surface it started on;
+        // without this the shadow ray self-intersects at grazing angles and the
+        // surface goes black
+        if (d < 0.001 && t > mint * 2.0) return 0.0;
         res = min(res, k * d / t);
-        t += max(d, 0.001);
+        t += max(d, 0.002);
         if (t > maxt) break;
     }
     return clamp(res, 0.0, 1.0);
@@ -936,7 +939,7 @@ void ftRender_(vec2 fc_, out vec4 outCol_, out vec4 outDepth_, out vec4 outEmiss
             float diff2 = max(dot(n, l2), 0.0) * 0.35 * uDiffuseStr;
             float shadow = 1.0;
             if (uShadowSoft > 0.01)
-                shadow = softShadow(p + n*0.01, l1, 0.01, 5.0, max(uShadowSoft, 0.1));
+                shadow = softShadow(p + n*0.02, l1, 0.02, 5.0, max(uShadowSoft, 0.1));
             float roughness = clamp(uRoughness, 0.04, 1.0);
             vec3 halfDir = normalize(l1 - rd);
             float specPow = 2.0/max(roughness*roughness, 0.001) - 2.0;
@@ -962,7 +965,7 @@ void ftRender_(vec2 fc_, out vec4 outCol_, out vec4 outDepth_, out vec4 outEmiss
             float diff2 = max(dot(n, l2), 0.0) * 0.35 * uDiffuseStr;
             float shadow = 1.0;
             if (uShadowSoft > 0.01)
-                shadow = softShadow(p + n*0.01, l1, 0.01, 5.0, max(uShadowSoft, 0.1));
+                shadow = softShadow(p + n*0.02, l1, 0.02, 5.0, max(uShadowSoft, 0.1));
             float roughness = clamp(uRoughness, 0.04, 1.0);
             vec3 halfDir = normalize(l1 - rd);
             float specPow = 2.0/max(roughness*roughness, 0.001) - 2.0;
@@ -1088,9 +1091,12 @@ float softShadow(vec3 ro, vec3 rd, float mint, float maxt, float k) {
     for (int i = 0; i < 64; i++) {
         if (i >= cap) break;
         float d = fractal_sdf(ro + rd * t);
-        if (d < 0.0001) return 0.0;
+        // only count a hit once the ray has cleared the surface it started on;
+        // without this the shadow ray self-intersects at grazing angles and the
+        // surface goes black
+        if (d < 0.001 && t > mint * 2.0) return 0.0;
         res = min(res, k * d / t);
-        t += max(d, 0.001);
+        t += max(d, 0.002);
         if (t > maxt) break;
     }
     return clamp(res, 0.0, 1.0);
@@ -1388,7 +1394,7 @@ void ftRender_(vec2 fc_, out vec4 outCol_, out vec4 outDepth_, out vec4 outEmiss
             float diff2 = max(dot(n, l2), 0.0) * 0.35 * uDiffuseStr;
             float shadow = 1.0;
             if (uShadowSoft > 0.01)
-                shadow = softShadow(p + n*0.01, l1, 0.01, 5.0, max(uShadowSoft, 0.1));
+                shadow = softShadow(p + n*0.02, l1, 0.02, 5.0, max(uShadowSoft, 0.1));
             float roughness = clamp(uRoughness, 0.04, 1.0);
             vec3 halfDir = normalize(l1 - rd);
             float specPow = 2.0/max(roughness*roughness, 0.001) - 2.0;
@@ -1414,7 +1420,7 @@ void ftRender_(vec2 fc_, out vec4 outCol_, out vec4 outDepth_, out vec4 outEmiss
             float diff2 = max(dot(n, l2), 0.0) * 0.35 * uDiffuseStr;
             float shadow = 1.0;
             if (uShadowSoft > 0.01)
-                shadow = softShadow(p + n*0.01, l1, 0.01, 5.0, max(uShadowSoft, 0.1));
+                shadow = softShadow(p + n*0.02, l1, 0.02, 5.0, max(uShadowSoft, 0.1));
             float roughness = clamp(uRoughness, 0.04, 1.0);
             vec3 halfDir = normalize(l1 - rd);
             float specPow = 2.0/max(roughness*roughness, 0.001) - 2.0;
