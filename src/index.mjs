@@ -1,5 +1,13 @@
-// Fractania-strudel — Fractania Mandelbulb renderer for strudel.cc,
-// integrated the same way Hydra is (initHydra → initFractania).
+// Fractania-strudel-lite — Fractania renderer for strudel.cc.
+//
+// Load with a plain dynamic import; the module boots itself:
+//
+//   await import('https://spiraldiver.github.io/Fractania-strudel-lite/dist/fractania-strudel-lite.js')
+//   fractal("mandelbulb").power(8).out()
+//
+// Strudel's transpiler does not rewrite import expressions, so this is ordinary
+// JavaScript. Note the SINGLE quotes: a double-quoted string would be rewritten
+// into mini-notation and a URL is not valid mini-notation.
 // https://github.com/Spiraldiver/Fractania-strudel   License: AGPL-3.0
 import { FractaniaRenderer, variantIndex, VARIANT_NAMES } from './engine.mjs';
 import { FractalChain, installPatternMap } from './api.mjs';
@@ -123,17 +131,24 @@ class FractaniaAsHydra {
   hush() { engine?.hush(); }
 }
 
-// Always claim the Hydra global with THIS module's class. strudel's initHydra
-// calls `new Hydra()` right after importing our src; if we only claimed it when
-// undefined, switching the src URL to a newer build within the same page
-// session would keep booting the previously imported module (stale variant
-// list) — so fractal("Menger") would resolve against old names and fall back
-// to variant 0. Loading this bundle means the user wants our renderer.
-globalThis.Hydra = FractaniaAsHydra;
+// Backwards compatibility only. Earlier versions were loaded through strudel's
+// initHydra({src}), which imports a url and then calls `new Hydra()`. That path
+// still works, but the global is now claimed ONLY when nothing else owns it —
+// claiming it unconditionally broke real Hydra for anyone who loaded this
+// bundle alongside it.
+if (typeof globalThis.Hydra === 'undefined') globalThis.Hydra = FractaniaAsHydra;
+
 globalThis.fractal = fractal;
 globalThis.fractania = fractal;
 globalThis.initFractania = initFractania;
 globalThis.clearFractania = clearFractania;
 if (!globalThis.F) globalThis.F = F;
+
+// Self-boot on import: importing IS the setup, so no initFractania() call is
+// needed. Guarded so a second import does not tear down a running engine.
+if (!globalThis.__fractaniaLoaded) {
+  globalThis.__fractaniaLoaded = true;
+  await initFractania();
+}
 
 export { FractaniaRenderer, FractalChain, VARIANT_NAMES, FractaniaAsHydra };

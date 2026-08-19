@@ -7,7 +7,7 @@ Live-codable 3D fractals for strudel.cc by Spiraldiver
 ## Use in strudel.cc
 
 ```js
-await initHydra({ src: 'https://cdn.jsdelivr.net/gh/Spiraldiver/Fractania-strudel-lite@v0.1.1/dist/fractania-strudel-lite.js' })
+await import('https://spiraldiver.github.io/Fractania-strudel-lite/dist/fractania-strudel-lite.js')
 
 let mod = sine.slow(4)
 
@@ -27,7 +27,21 @@ fractal("Menger")
   .out()
 ```
 
-After the first load, `await initFractania()` also works. `clearFractania()`
+> **Single quotes matter.** Strudel's transpiler rewrites every double-quoted
+> string into mini-notation, and a URL is not valid mini-notation, so
+> `import("https://…")` fails with `[mini] parse error … but "/" found`.
+
+Mirrors:
+
+```js
+await import('https://cdn.jsdelivr.net/gh/Spiraldiver/Fractania-strudel-lite@main/dist/fractania-strudel-lite.js')
+```
+
+> jsDelivr caches `@main` hard and can serve a stale build for hours — GitHub
+> Pages is always fresh, and with jsDelivr you should pin a tag.
+
+The module boots itself on import, so no `initFractania()` call is needed.
+`clearFractania()`
 stops and removes the canvas. **Alt+drag** orbits the camera.
 
 ## Fractals

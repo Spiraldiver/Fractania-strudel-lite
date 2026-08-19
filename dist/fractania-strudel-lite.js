@@ -2516,12 +2516,16 @@ var FractaniaAsHydra = class {
     engine?.hush();
   }
 };
-globalThis.Hydra = FractaniaAsHydra;
+if (typeof globalThis.Hydra === "undefined") globalThis.Hydra = FractaniaAsHydra;
 globalThis.fractal = fractal;
 globalThis.fractania = fractal;
 globalThis.initFractania = initFractania;
 globalThis.clearFractania = clearFractania;
 if (!globalThis.F) globalThis.F = F;
+if (!globalThis.__fractaniaLoaded) {
+  globalThis.__fractaniaLoaded = true;
+  await initFractania();
+}
 export {
   F,
   FractalChain,
