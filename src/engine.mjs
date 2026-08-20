@@ -108,7 +108,7 @@ const WEB_DEFAULTS = {
   uUseDiffuseGradient: 0, uUseEmissionGradient: 0,
   uEpsilon: 0.0005, uMaxSteps: 256, uMaxDist: 100.0,
   uRenderMode: 0,
-  uShadowSoft: 16.0, uShadowSteps: 32,
+  uShadowSoft: 16.0, uShadowSteps: 8,
   uDiffuseStr: 1.0, uSpecularStr: 0.3,
   uReflection: 0.0, uMetallic: 0.0, uRoughness: 0.5,
   uPTBounces: 2, uPTGIStr: 0.5, uPTEmMult: 1.0,
